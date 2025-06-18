@@ -1,0 +1,158 @@
+.friend-links-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+.friend-links-title {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  color: #333;
+}
+.friend-filters {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.friend-filters .filter-btn {
+  padding: 0.5rem 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 30px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 1rem;
+}
+.friend-filters .filter-btn.active {
+  background: #3498db;
+  color: #fff;
+  border-color: transparent;
+}
+.friend-filters .filter-btn:hover:not(.active) {
+  background: #f5f5f5;
+}
+.friend-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+.friend-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+.friend-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+.friend-card a {
+  display: flex;
+  padding: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+}
+.avatar-container {
+  margin-right: 1.2rem;
+  flex-shrink: 0;
+}
+.friend-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #f0f0f0;
+}
+.friend-avatar-placeholder {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: #3498db;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.8rem;
+}
+.friend-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.friend-name {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+.friend-desc {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.5;
+}
+.friend-form {
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 2rem;
+  margin-top: 3rem;
+}
+.friend-form h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.friend-form form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+.friend-form form textarea {
+  grid-column: span 2;
+  height: 120px;
+  resize: vertical;
+}
+.friend-form form button {
+  grid-column: span 2;
+  padding: 0.8rem;
+  background: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background 0.3s;
+}
+.friend-form form button:hover {
+  background: #2980b9;
+}
+.friend-form input,
+.friend-form textarea {
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+.friend-form input:focus,
+.friend-form textarea:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52,152,219,0.2);
+}
+@media (max-width: 768px) {
+  .friend-list {
+    grid-template-columns: 1fr;
+  }
+  .friend-form form {
+    grid-template-columns: 1fr;
+  }
+  .friend-form form textarea,
+  .friend-form form button {
+    grid-column: span 1;
+  }
+}
