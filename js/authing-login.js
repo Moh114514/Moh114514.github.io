@@ -1,11 +1,4 @@
-import { Authing } from 'https://cdn.jsdelivr.net/npm/@authing/browser@5.5.1/dist/authing.browser.esm.min.js';
-
-const authingClient = new Authing({
-    appId: '6853b4e9a0c91359e5e468ee', // ✅ 请替换成你的 Authing 应用 ID
-    domain: 'phtbdhowjypm-demo.authing.cn',
-    redirectUri: window.location.origin
-});
-
+// 不再使用 import，使用全局变量 Authing
 export function setupLogin() {
     const mask = document.getElementById('login-mask');
     const loginBtn = document.getElementById('login-button');
@@ -13,6 +6,12 @@ export function setupLogin() {
 
     mask.style.display = 'flex';
     logoutBtn.style.display = 'none';
+
+    const authingClient = new window.Authing({
+        appId: '6853b4e9a0c91359e5e468ee',
+        domain: 'phtbdhowjypm-demo.authing.cn',
+        redirectUri: window.location.origin
+    });
 
     // 检查是否已登录
     authingClient.checkLoginStatus()
@@ -27,12 +26,10 @@ export function setupLogin() {
             }
         });
 
-    // 登录按钮事件
     loginBtn?.addEventListener('click', () => {
         authingClient.loginWithRedirect();
     });
 
-    // 登出按钮事件
     logoutBtn?.addEventListener('click', () => {
         authingClient.logoutWithRedirect();
     });
