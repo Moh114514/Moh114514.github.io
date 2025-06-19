@@ -930,11 +930,11 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 ;
 
-document.addEventListener('DOMContentLoaded', function() {
-  import('/js/authing-login.js').then(module => {
-    module.setupLogin();  // 调用 setupLogin 方法
-  }).catch(error => {
-    console.error("加载登录模块失败", error);
-  });
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const module = await import('/js/firebase-login.js');
+    module.setupLogin();
+  } catch (e) {
+    console.error("加载登录模块失败", e);
+  }
 });
-
