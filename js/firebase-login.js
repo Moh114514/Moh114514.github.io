@@ -26,21 +26,32 @@ const googleProvider = new GoogleAuthProvider();
 
 export function setupLogin() {
     const mask = document.getElementById('login-mask');
-    const googleLoginBtn = document.getElementById('google-login-button');
-    const emailLoginBtn = document.getElementById('email-login-button');
+    const googleBtn = document.getElementById('google-login-button');
+    const emailBtn = document.getElementById('email-login-button');
     const registerBtn = document.getElementById('register-button');
     const logoutBtn = document.getElementById('logout-button');
+    const closeBtn = document.getElementById('close-login-btn'); // 👈 添加关闭按钮
 
-    // 默认显示登录界面，隐藏登出按钮
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    // 默认显示登录框，等状态判断
     mask.style.display = 'flex';
     logoutBtn.style.display = 'none';
 
-    // 监听登录状态变化
+    // 关闭按钮事件 👇
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            mask.style.display = 'none';
+        });
+    }
+
+    // 登录状态变化监听
     onAuthStateChanged(auth, user => {
         if (user) {
             mask.style.display = 'none';
             logoutBtn.style.display = 'block';
-            console.log("当前用户:", user.email || user.displayName);
         } else {
             mask.style.display = 'flex';
             logoutBtn.style.display = 'none';
@@ -48,64 +59,54 @@ export function setupLogin() {
     });
 
     // Google 登录
-    googleLoginBtn?.addEventListener('click', () => {
-        signInWithPopup(auth, googleProvider)
+    googleBtn?.addEventListener('click', () => {
+        signInWithPopup(auth, provider)
             .then(result => {
                 alert(`欢迎 ${result.user.displayName || result.user.email}！`);
                 mask.style.display = 'none';
                 logoutBtn.style.display = 'block';
             })
-            .catch(error => {
-                console.error('Google 登录失败:', error);
-                alert('Google 登录失败，请查看控制台');
+            .catch(err => {
+                console.error('登录失败:', err);
+                alert('登录失败，请查看控制台。');
             });
     });
 
-    // 邮箱登录
-    emailLoginBtn?.addEventListener('click', () => {
-        const email = prompt('请输入邮箱');
-        const password = prompt('请输入密码');
-        if (!email || !password) {
-            alert('邮箱和密码不能为空');
-            return;
-        }
-        signInWithEmailAndPassword(auth, email, password)
-            .then(result => {
-                alert(`欢迎回来，${result.user.email}！`);
+    // 邮箱登录（你已实现）
+    emailBtn?.addEventListener('click', async () => {
+        const email = prompt("请输入邮箱：");
+        const password = prompt("请输入密码：");
+        if (email && password) {
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                alert(`欢迎 ${userCredential.user.email}`);
                 mask.style.display = 'none';
                 logoutBtn.style.display = 'block';
-            })
-            .catch(error => {
-                console.error('邮箱登录失败:', error);
-                alert('邮箱登录失败，请查看控制台');
-            });
+            } catch (err) {
+                console.error('邮箱登录失败:', err);
+                alert("邮箱登录失败，请检查邮箱/密码或网络连接。");
+            }
+        }
     });
 
-    // 邮箱注册
-    registerBtn?.addEventListener('click', () => {
-        const email = prompt('请输入注册邮箱');
-        const password = prompt('请输入密码（至少6位）');
-        if (!email || !password) {
-            alert('邮箱和密码不能为空');
-            return;
-        }
-        if (password.length < 6) {
-            alert('密码至少6位');
-            return;
-        }
-        createUserWithEmailAndPassword(auth, email, password)
-            .then(result => {
-                alert(`注册成功，欢迎 ${result.user.email}！`);
+    // 注册按钮
+    registerBtn?.addEventListener('click', async () => {
+        const email = prompt("注册邮箱：");
+        const password = prompt("设置密码（最少6位）：");
+        if (email && password) {
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                alert(`注册成功：${userCredential.user.email}`);
                 mask.style.display = 'none';
                 logoutBtn.style.display = 'block';
-            })
-            .catch(error => {
-                console.error('注册失败:', error);
-                alert('注册失败，请查看控制台');
-            });
+            } catch (err) {
+                console.error('注册失败:', err);
+                alert("注册失败，请检查输入或控制台错误。");
+            }
+        }
     });
 
-    // 登出
+    // 登出按钮
     logoutBtn?.addEventListener('click', () => {
         signOut(auth)
             .then(() => {
@@ -113,9 +114,8 @@ export function setupLogin() {
                 mask.style.display = 'flex';
                 logoutBtn.style.display = 'none';
             })
-            .catch(error => {
-                console.error('登出失败:', error);
-                alert('登出失败，请查看控制台');
+            .catch(err => {
+                console.error('登出失败:', err);
             });
     });
 }
