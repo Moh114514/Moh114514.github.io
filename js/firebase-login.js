@@ -4,9 +4,12 @@ import {
     onAuthStateChanged,
     signInWithPopup,
     GoogleAuthProvider,
-    signOut
+    signOut,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword
 } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
 
+// 你的 Firebase 配置
 const firebaseConfig = {
     apiKey: "AIzaSyD4NOKwIY2lXJP_neRJkmaJdRHxqMFSeog",
     authDomain: "moh-home.firebaseapp.com",
@@ -19,71 +22,100 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
+const googleProvider = new GoogleAuthProvider();
 
 export function setupLogin() {
-    onAuthStateChanged(auth, user => {
-        console.log('Auth state changed, user:', user);
-        if (user) {
-            mask.style.display = 'none';
-            logoutBtn.style.display = 'block';
-        } else {
-            mask.style.display = 'flex';
-            logoutBtn.style.display = 'none';
-        }
-    });
-    console.log('setupLogin called')
     const mask = document.getElementById('login-mask');
-    const loginBtn = document.getElementById('login-button');
+    const googleLoginBtn = document.getElementById('google-login-button');
+    const emailLoginBtn = document.getElementById('email-login-button');
+    const registerBtn = document.getElementById('register-button');
     const logoutBtn = document.getElementById('logout-button');
 
-    // 页面刚加载，默认显示登录界面，等检测登录状态后决定是否隐藏
+    // 默认显示登录界面，隐藏登出按钮
     mask.style.display = 'flex';
     logoutBtn.style.display = 'none';
 
     // 监听登录状态变化
     onAuthStateChanged(auth, user => {
         if (user) {
-            // 用户已登录，隐藏登录界面，显示登出按钮
             mask.style.display = 'none';
             logoutBtn.style.display = 'block';
+            console.log("当前用户:", user.email || user.displayName);
         } else {
-            // 用户未登录，保持登录界面显示，隐藏登出按钮
             mask.style.display = 'flex';
             logoutBtn.style.display = 'none';
         }
     });
 
-    // 登录按钮事件
-    if (loginBtn) {
-        loginBtn.addEventListener('click', () => {
-            signInWithPopup(auth, provider)
-                .then(result => {
-                    const user = result.user;
-                    alert(`欢迎 ${user.displayName || user.email}！`);
-                    mask.style.display = 'none';
-                    logoutBtn.style.display = 'block';
-                })
-                .catch(err => {
-                    console.error('登录失败:', err);
-                    alert('登录失败，请查看控制台。');
-                });
-        });
-    }
+    // Google 登录
+    googleLoginBtn?.addEventListener('click', () => {
+        signInWithPopup(auth, googleProvider)
+            .then(result => {
+                alert(`欢迎 ${result.user.displayName || result.user.email}！`);
+                mask.style.display = 'none';
+                logoutBtn.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Google 登录失败:', error);
+                alert('Google 登录失败，请查看控制台');
+            });
+    });
 
-    // 登出按钮事件
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
-            signOut(auth)
-                .then(() => {
-                    alert('已登出');
-                    mask.style.display = 'flex';
-                    logoutBtn.style.display = 'none';
-                })
-                .catch(err => {
-                    console.error('登出失败:', err);
-                });
-        });
-    }
+    // 邮箱登录
+    emailLoginBtn?.addEventListener('click', () => {
+        const email = prompt('请输入邮箱');
+        const password = prompt('请输入密码');
+        if (!email || !password) {
+            alert('邮箱和密码不能为空');
+            return;
+        }
+        signInWithEmailAndPassword(auth, email, password)
+            .then(result => {
+                alert(`欢迎回来，${result.user.email}！`);
+                mask.style.display = 'none';
+                logoutBtn.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('邮箱登录失败:', error);
+                alert('邮箱登录失败，请查看控制台');
+            });
+    });
+
+    // 邮箱注册
+    registerBtn?.addEventListener('click', () => {
+        const email = prompt('请输入注册邮箱');
+        const password = prompt('请输入密码（至少6位）');
+        if (!email || !password) {
+            alert('邮箱和密码不能为空');
+            return;
+        }
+        if (password.length < 6) {
+            alert('密码至少6位');
+            return;
+        }
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(result => {
+                alert(`注册成功，欢迎 ${result.user.email}！`);
+                mask.style.display = 'none';
+                logoutBtn.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('注册失败:', error);
+                alert('注册失败，请查看控制台');
+            });
+    });
+
+    // 登出
+    logoutBtn?.addEventListener('click', () => {
+        signOut(auth)
+            .then(() => {
+                alert('已登出');
+                mask.style.display = 'flex';
+                logoutBtn.style.display = 'none';
+            })
+            .catch(error => {
+                console.error('登出失败:', error);
+                alert('登出失败，请查看控制台');
+            });
+    });
 }
-window.auth = auth;
