@@ -928,12 +928,13 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   })
 })
+;
 
-(async () => {
+document.addEventListener('DOMContentLoaded', async () => {
   try {
     const module = await import('/js/firebase-login.js');
     module.setupLogin();
   } catch (e) {
     console.error("加载登录模块失败", e);
   }
-})();
+});
