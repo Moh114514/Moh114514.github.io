@@ -932,7 +932,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 document.addEventListener('DOMContentLoaded', async () => {
   try {
-    const module = await import('themes/butterfly/source/js/authing-login.js');
+    const module = await import('https://moh114514.github.io/js/authing-login.js');
     module.setupLogin();
   } catch (e) {
     console.error("加载登录模块失败", e);
